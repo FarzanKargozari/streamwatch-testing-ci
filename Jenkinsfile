@@ -1,0 +1,21 @@
+
+pipeline {
+    agent any
+
+    stages {
+        stage('Run Automated Tests') {
+            steps {
+                sh 'bash run_tests.sh'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'SUCCESS: All tests passed!'
+        }
+        failure {
+            echo 'FAILED: Check the test results.'
+        }
+    }
+}
