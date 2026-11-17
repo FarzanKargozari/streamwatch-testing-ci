@@ -179,3 +179,23 @@ def test_negative_latency(client):
     assert response.status_code == 422
     errors = response.json()["detail"]
     assert errors[0]["loc"][-1] == "latency_ms"
+
+    #Add a high-latency test
+
+def test_high_latency_storage(client):
+    response = send_reading(
+        client,
+        loss=1,
+        latency=500
+    )
+
+    assert response.status_code == 201
+
+    row = client.app.state.db.execute(
+        "SELECT latency_ms FROM readings "
+        "WHERE stream_id = ?",
+        ("camera-01",)
+    ).fetchone()
+
+    assert row is not None
+    assert row[0] == 500
