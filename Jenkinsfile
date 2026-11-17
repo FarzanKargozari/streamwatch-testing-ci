@@ -14,34 +14,32 @@ pipeline {
 
         stage('Run Automated Tests') {
             steps {
-                sh '''
-                    bash run_tests.sh
-                '''
+                sh 'bash run_tests.sh'
             }
         }
     }
 
-   
+    post {
+        always {
+            junit allowEmptyResults: false,
+                  testResults: 'test-results.xml'
 
-post {
-    always {
-        junit allowEmptyResults: false,
-              testResults: 'test-results.xml'
+            recordCoverage(
+                tools: [[
+                    parser: 'COBERTURA',
+                    pattern: 'coverage.xml'
+                ]],
+                sourceDirectories: [[path: '.']],
+                sourceCodeRetention: 'LAST_BUILD'
+            )
+        }
 
-        recordCoverage(
-            tools: [[parser: 'COBERTURA',
-                     pattern: 'coverage.xml']]
-        )
+        success {
+            echo 'SUCCESS: All tests passed!'
+        }
+
+        failure {
+            echo 'FAILED: Check the test results.'
+        }
     }
-
-    success {
-        echo 'SUCCESS: All tests passed!'
-    }
-
-    failure {
-        echo 'FAILED: Check the test results.'
-    }
-}
-
-
 }
