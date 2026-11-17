@@ -22,10 +22,16 @@ pipeline {
     }
 
    
+
 post {
     always {
         junit allowEmptyResults: false,
               testResults: 'test-results.xml'
+
+        recordCoverage(
+            tools: [[parser: 'COBERTURA',
+                     pattern: 'coverage.xml']]
+        )
     }
 
     success {
@@ -36,5 +42,6 @@ post {
         echo 'FAILED: Check the test results.'
     }
 }
+
 
 }
