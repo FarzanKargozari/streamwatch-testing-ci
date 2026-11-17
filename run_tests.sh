@@ -10,3 +10,4 @@ else
     echo "FAILED: Some tests failed!"
     exit 1
 fi
+# Jenkins automatic GitHub polling test
