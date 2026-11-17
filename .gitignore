@@ -20,3 +20,11 @@ __pycache__/
 
 # IDE settings
 .vscode/
+
+# Generated test and coverage reports
+.coverage
+.coverage.*
+coverage.xml
+test-results.xml
+htmlcov/
+

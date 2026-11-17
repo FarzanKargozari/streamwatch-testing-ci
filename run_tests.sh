@@ -3,7 +3,7 @@
 
 echo "Starting StreamWatch automated tests..."
 
-.venv/bin/python -m pytest -v --junitxml=test-results.xml
+.venv/bin/python -m pytest -v --junitxml=test-results.xml --cov=streamwatch --cov-branch --cov-report=term-missing --cov-report=xml:coverage.xml
 if [ $? -eq 0 ]; then
     echo "SUCCESS: All tests passed!"
 else
