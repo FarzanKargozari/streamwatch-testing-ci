@@ -21,12 +21,20 @@ pipeline {
         }
     }
 
-    post {
-        success {
-            echo 'SUCCESS: All tests passed!'
-        }
-        failure {
-            echo 'FAILED: Check the test results.'
-        }
+   
+post {
+    always {
+        junit allowEmptyResults: false,
+              testResults: 'test-results.xml'
     }
+
+    success {
+        echo 'SUCCESS: All tests passed!'
+    }
+
+    failure {
+        echo 'FAILED: Check the test results.'
+    }
+}
+
 }
