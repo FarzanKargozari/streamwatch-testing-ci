@@ -93,6 +93,7 @@ def test_alarm_threshold(
 
     assert response.status_code == 200
 
+
     data = response.json()
 
     assert data["stream_id"] == "camera-01"
@@ -165,4 +166,16 @@ def test_alarm_notification(client):
     assert "camera-01" in client.app.state.alerts
 
 
+def test_negative_latency(client):
+    response = client.post(
+        "/api/streams/camera-01/telemetry",
+        headers=AUTH,
+        json={
+            "packet_loss_percent": 2,
+            "latency_ms": -10
+        }
+    )
 
+    assert response.status_code == 422
+    errors = response.json()["detail"]
+    assert errors[0]["loc"][-1] == "latency_ms"
