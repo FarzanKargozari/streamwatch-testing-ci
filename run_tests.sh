@@ -3,7 +3,7 @@
 
 echo "Starting StreamWatch automated tests..."
 
-python -m pytest -v
+.venv/bin/python -m pytest -v
 
 if [ $? -eq 0 ]; then
     echo "SUCCESS: All tests passed!"
