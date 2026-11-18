@@ -2,6 +2,7 @@
 import logging
 import sqlite3
 
+from threading import Lock
 from fastapi import FastAPI, Header, HTTPException
 from pydantic import BaseModel, Field
 
@@ -30,6 +31,9 @@ def create_app():
         )
     """)
 
+    # Protect the shared SQLite connection
+    db_lock = Lock()
+
     app.state.db = db
     app.state.alerts = []
 
@@ -53,18 +57,19 @@ def create_app():
     ):
         check_auth(x_api_key)
 
-        # Store telemetry in SQL
-        db.execute(
-            "INSERT INTO readings "
-            "(stream_id, packet_loss, latency_ms) "
-            "VALUES (?, ?, ?)",
-            (
-                stream_id,
-                reading.packet_loss_percent,
-                reading.latency_ms
+        # Store telemetry safely in SQL
+        with db_lock:
+            db.execute(
+                "INSERT INTO readings "
+                "(stream_id, packet_loss, latency_ms) "
+                "VALUES (?, ?, ?)",
+                (
+                    stream_id,
+                    reading.packet_loss_percent,
+                    reading.latency_ms
+                )
             )
-        )
-        db.commit()
+            db.commit()
 
         # Detect excessive packet loss
         alarm = reading.packet_loss_percent >= 2
@@ -89,13 +94,15 @@ def create_app():
     ):
         check_auth(x_api_key)
 
-        row = db.execute(
-            "SELECT packet_loss, latency_ms "
-            "FROM readings "
-            "WHERE stream_id = ? "
-            "ORDER BY id DESC LIMIT 1",
-            (stream_id,)
-        ).fetchone()
+        # Safely read the latest measurement
+        with db_lock:
+            row = db.execute(
+                "SELECT packet_loss, latency_ms "
+                "FROM readings "
+                "WHERE stream_id = ? "
+                "ORDER BY id DESC LIMIT 1",
+                (stream_id,)
+            ).fetchone()
 
         if row is None:
             raise HTTPException(

@@ -1,5 +1,6 @@
 
 pytest==9.2.0
-fastapi
-httpx
-pytest-cov
+fastapi==0.163.1
+httpx==0.28.1
+pytest-cov==7.1.0
+uvicorn==0.54.0

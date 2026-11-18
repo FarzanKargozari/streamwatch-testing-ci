@@ -27,4 +27,16 @@ __pycache__/
 coverage.xml
 test-results.xml
 htmlcov/
+# Local databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Additional credentials and local files
+*.p12
+*.pfx
+*.log
+
+# Local learning experiments
+timeout_demo.py
 
