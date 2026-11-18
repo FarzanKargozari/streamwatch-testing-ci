@@ -157,3 +157,4 @@ production video-monitoring system. The application uses
 an in-memory SQLite database and a dummy API key.
 Performance tests provide local measurements rather than
 production load-testing guarantees.
+Auto-deployment test: GitHub to Render
