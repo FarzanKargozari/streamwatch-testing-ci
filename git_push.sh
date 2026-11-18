@@ -2,6 +2,15 @@
 #!/bin/bash
 set -e
 
+# Prevent committing unrelated staged changes
+if ! git diff --cached --quiet; then
+    echo "ERROR: Some files are already staged."
+    echo "Review them before running this script."
+    git diff --cached --name-only
+    exit 1
+fi
+
+
 # Require a commit message and at least one file
 if [ "$#" -lt 2 ]; then
     echo "Usage: bash git_push.sh 'Commit message' file1 [file2 ...]"
