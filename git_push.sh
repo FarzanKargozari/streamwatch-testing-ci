@@ -2,34 +2,42 @@
 #!/bin/bash
 set -e
 
-echo "Running automated tests before Git push..."
-
-if ! bash run_tests.sh; then
-    echo "ERROR: Tests failed. Push cancelled."
+# Require a commit message and at least one file
+if [ "$#" -lt 2 ]; then
+    echo "Usage: bash git_push.sh 'Commit message' file1 [file2 ...]"
     exit 1
 fi
 
-echo "All tests passed. Continuing..."
+message="$1"
+shift
 
-# Stage only the intended files
-git add network_client.py test_network_client.py
+# Run automated tests before committing
+echo "Running automated tests..."
+bash run_tests.sh
 
-# Check for whitespace errors
+# Stage only the requested files
+git add -- "$@"
+
+# Check staged changes
 git diff --cached --check
 
-# Stop if there are no staged changes
 if git diff --cached --quiet; then
     echo "No changes to commit."
     exit 0
 fi
 
-# Show the files being committed
+echo "Files staged for commit:"
 git diff --cached --stat
 
-# Commit with a descriptive message
-git commit -m "${1:-Update network tests}"
+# Require confirmation before publishing
+read -r -p "Commit and push these changes? (yes/no): " answer
 
-# Push to GitHub
+if [ "$answer" != "yes" ]; then
+    echo "Cancelled. No commit or push performed."
+    exit 0
+fi
+
+git commit -m "$message"
 git push origin main
 
 echo "Successfully pushed to GitHub!"
