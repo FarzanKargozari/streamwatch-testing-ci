@@ -2,6 +2,15 @@
 #!/bin/bash
 set -e
 
+echo "Running automated tests before Git push..."
+
+if ! bash run_tests.sh; then
+    echo "ERROR: Tests failed. Push cancelled."
+    exit 1
+fi
+
+echo "All tests passed. Continuing..."
+
 # Stage only the intended files
 git add network_client.py test_network_client.py
 
