@@ -1,6 +1,9 @@
 
 # StreamWatch — API Testing & CI/CD Automation
 
+[![StreamWatch Automated Tests](https://github.com/FarzanKargozari/streamwatch-testing-ci/actions/workflows/tests.yml/badge.svg)](https://github.com/FarzanKargozari/streamwatch-testing-ci/actions/workflows/tests.yml)
+
+
 A Python-based software testing project simulating video-stream telemetry monitoring, featuring REST API testing, database validation, network failure simulation, concurrent requests, and Jenkins CI/CD automation.
 
 ## Technologies
