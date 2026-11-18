@@ -114,6 +114,42 @@ critical section and protecting database reads.
 This demonstrates a practical workflow of reproducing,
 investigating, fixing, and retesting a concurrency defect.
 
+
+## Load Testing with Locust
+
+StreamWatch includes a Locust scenario that simulates
+concurrent HTTP users submitting camera telemetry.
+
+Run the API locally, then execute:
+
+```bash
+python -m locust -f locustfile.py \
+  --headless \
+  --host http://127.0.0.1:8000 \
+  --users 5 \
+  --spawn-rate 1 \
+  --run-time 30s \
+  --csv locust_results
+```
+
+### Sample Local Results
+
+| Metric | Result |
+|---|---|
+| HTTP requests | 92 |
+| Failed requests | 0 |
+| Average response time | 5.34 ms |
+| Median response time | 5 ms |
+| P95 response time | 12 ms |
+| P99 response time | 22 ms |
+| Throughput | 3.23 requests/second |
+
+Test environment: local StreamWatch API running on
+127.0.0.1:8000, with 5 simulated users.
+
+Results describe this specific local workload and
+are not production performance guarantees.
+
 ## Project Scope
 
 StreamWatch is an educational testing project, not a

@@ -40,3 +40,6 @@ htmlcov/
 # Local learning experiments
 timeout_demo.py
 
+# Generated Locust load-testing reports
+locust_results_*.csv
+
