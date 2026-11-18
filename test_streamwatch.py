@@ -356,3 +356,38 @@ def test_concurrent_shared_api(client):
         "Concurrency regression test passed: "
         "50 readings verified."
     )
+
+# TEST: Verify five cameras keep independent telemetry
+def test_five_camera_data_isolation(client):
+    for i in range(1, 6):
+        camera_id = f"camera-{i}"
+
+        response = client.post(
+            f"/api/streams/{camera_id}/telemetry",
+            headers=AUTH,
+            json={
+                "packet_loss_percent": i,
+                "latency_ms": i * 10
+            }
+        )
+
+        assert response.status_code == 201
+
+    for i in range(1, 6):
+        camera_id = f"camera-{i}"
+
+        response = client.get(
+            f"/api/streams/{camera_id}/health",
+            headers=AUTH
+        )
+
+        assert response.status_code == 200
+
+        data = response.json()
+
+        assert data["stream_id"] == camera_id
+        assert data["packet_loss_percent"] == i
+        assert data["latency_ms"] == i * 10
+        assert data["alarm"] is (i >= 2)
+
+    print("All five cameras passed data isolation checks!")
